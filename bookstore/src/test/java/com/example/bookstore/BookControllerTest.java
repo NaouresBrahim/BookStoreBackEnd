@@ -22,12 +22,10 @@ public class BookControllerTest {
 
     @Test
     public void shouldReturnListOfBooks() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/books")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/books/getAll")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$").isArray());
-
-
     }
 
 }
