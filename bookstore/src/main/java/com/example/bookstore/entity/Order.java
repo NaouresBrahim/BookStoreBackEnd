@@ -1,7 +1,6 @@
 package com.example.bookstore.entity;
 
 
-import com.example.bookstore.OrderStatusEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,13 +30,22 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToMany
-    @JoinTable(
-            name = "order_books",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id")
-    )
-    private List<Book> books;
+    @OneToMany(mappedBy = "pk.order")
+    private List<OrderDetail> orderDetail = new ArrayList<>();
 
+    @Transient
+    public Double getTotalOrderPrice() {
+        double sum = 0D;
+        List<OrderDetail> orderDetails= getOrderDetail();
+        for (OrderDetail od : orderDetails) {
+            sum += od.getTotalPrice();
+        }
+        return sum;
+    }
+
+    @Transient
+    public int getNumberOfProducts() {
+        return this.orderDetail.size();
+    }
 
 }
