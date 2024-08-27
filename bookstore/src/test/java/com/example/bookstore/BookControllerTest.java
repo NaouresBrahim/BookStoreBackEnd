@@ -1,31 +1,92 @@
 package com.example.bookstore;
 
+import com.example.bookstore.controller.BookController;
+import com.example.bookstore.entity.Book;
+import com.example.bookstore.service.BookService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
 
-
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(BookController.class)
 public class BookControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    public void shouldReturnListOfBooks() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/books/getAll")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray());
+    @MockBean
+    private BookService bookService;
+
+    @InjectMocks
+    private BookController bookController;
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+        mockMvc = MockMvcBuilders.standaloneSetup(bookController).build();
     }
 
+    @Test
+    public void testGetAllBooks() throws Exception {
+        when(bookService.getAllBooks()).thenReturn(List.of(new Book(1L, "Title", "Author",19.99)));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/book/getAll")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(1));
+    }
+
+    @Test
+    public void testGetBookById() throws Exception {
+        Book book = new Book(1L, "Title", "Author",19.99);
+        when(bookService.getBookById(anyLong())).thenReturn(book);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/book/{id}", 1)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Title"));
+    }
+
+    @Test
+    public void testCreateBook() throws Exception {
+        Book book = new Book(1L, "Title", "Author", 19.99);
+        when(bookService.createBook(any(Book.class))).thenReturn(book);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/book")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Title\",\"author\":\"Author\"}"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Title"));
+    }
+
+    @Test
+    public void testUpdateBook() throws Exception {
+        Book book = new Book(1L, "Updated Title", "Updated Author", 19.99);
+        when(bookService.updateBook(anyLong(), any(Book.class))).thenReturn(book);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/book/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"Updated Title\",\"author\":\"Updated Author\"}"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Updated Title"));
+    }
+
+    @Test
+    public void testDeleteBook() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/book/{id}", 1))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
 }
