@@ -1,7 +1,7 @@
 package com.example.bookstore.service;
 
 import com.example.bookstore.entity.Book;
-import com.example.bookstore.helper.exception.BookNotFoundException;
+import com.example.bookstore.helper.exception.ItemNotFoundException;
 import com.example.bookstore.repository.BookRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +24,11 @@ public class BookService {
     }
 
     public List<Book> getAllBooks() {
-        List<Book> books =bookRepository.findAll();
-        log.info("here the list of available books{}", books);
-        return new ArrayList<>(books);
+        return new ArrayList<>(bookRepository.findAll());
     }
 
     public Book getBookById(Long id) {
-        return bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with ID: " + id, "BOOK_NOT_FOUND"));
+        return bookRepository.findById(id).orElseThrow(() -> new ItemNotFoundException("Book not found with ID: " + id, "BOOK_NOT_FOUND"));
     }
 
     public Book createBook(Book book) {
@@ -38,7 +36,7 @@ public class BookService {
     }
 
     public Book updateBook(Long id, Book bookDetails) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with ID: " + id, "BOOK_NOT_FOUND"));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new ItemNotFoundException("Book not found with ID: " + id, "BOOK_NOT_FOUND"));
         book.setTitle(bookDetails.getTitle());
         book.setAuthor(bookDetails.getAuthor());
         book.setPrice(bookDetails.getPrice());
@@ -46,7 +44,7 @@ public class BookService {
     }
 
     public void deleteBook(Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException("Book not found with ID: " + id, "BOOK_NOT_FOUND"));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new ItemNotFoundException("Book not found with ID: " + id, "BOOK_NOT_FOUND"));
         bookRepository.delete(book);
     }
 }

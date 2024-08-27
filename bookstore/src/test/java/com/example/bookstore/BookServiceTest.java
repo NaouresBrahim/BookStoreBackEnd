@@ -1,7 +1,7 @@
 package com.example.bookstore;
 
 import com.example.bookstore.entity.Book;
-import com.example.bookstore.helper.exception.BookNotFoundException;
+import com.example.bookstore.helper.exception.ItemNotFoundException;
 import com.example.bookstore.repository.BookRepository;
 import com.example.bookstore.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,7 +63,7 @@ public class BookServiceTest {
     void testGetBookByIdNotFound() {
         when(bookRepository.findById(1L)).thenReturn(Optional.empty());
 
-        BookNotFoundException thrown = assertThrows(BookNotFoundException.class, () -> {
+        ItemNotFoundException thrown = assertThrows(ItemNotFoundException.class, () -> {
             bookService.getBookById(1L);
         });
 
@@ -106,7 +106,7 @@ public class BookServiceTest {
 
         when(bookRepository.findById(1L)).thenReturn(Optional.empty());
 
-        BookNotFoundException thrown = assertThrows(BookNotFoundException.class, () -> {
+        ItemNotFoundException thrown = assertThrows(ItemNotFoundException.class, () -> {
             bookService.updateBook(1L, updatedBook);
         });
 
@@ -130,7 +130,7 @@ public class BookServiceTest {
     void testDeleteBookNotFound() {
         when(bookRepository.findById(1L)).thenReturn(Optional.empty());
 
-        BookNotFoundException thrown = assertThrows(BookNotFoundException.class, () -> {
+        ItemNotFoundException thrown = assertThrows(ItemNotFoundException.class, () -> {
             bookService.deleteBook(1L);
         });
 

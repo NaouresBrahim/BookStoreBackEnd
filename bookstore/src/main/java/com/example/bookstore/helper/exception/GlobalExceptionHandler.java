@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(BookNotFoundException.class)
+    @ExceptionHandler(ItemNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<ErrorResponse> handleBookNotFoundException(BookNotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleItemNotFoundException(ItemNotFoundException ex) {
         ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
