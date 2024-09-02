@@ -2,6 +2,7 @@ package com.example.bookstore.security;
 
 import com.example.bookstore.entity.User;
 import com.example.bookstore.repository.UserRepository;
+import com.example.bookstore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class RegistrationController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService UserService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -23,7 +24,7 @@ public class RegistrationController {
     public String registerUser( User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole("USER"); // Default role
-        userRepository.save(user);
+        UserService.save(user);
         return "redirect:/login";
     }
 }
