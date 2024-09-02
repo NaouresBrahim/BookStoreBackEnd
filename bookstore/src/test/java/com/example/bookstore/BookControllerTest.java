@@ -42,7 +42,7 @@ public class BookControllerTest {
     public void testGetAllBooks() throws Exception {
         when(bookService.getAllBooks()).thenReturn(List.of(new Book(1L, "Title", "Author",19.99)));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/book/getAll")
+        mockMvc.perform(MockMvcRequestBuilders.get("/public/api/book/getAll")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(1));
@@ -53,7 +53,7 @@ public class BookControllerTest {
         Book book = new Book(1L, "Title", "Author",19.99);
         when(bookService.getBookById(anyLong())).thenReturn(book);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/book/{id}", 1)
+        mockMvc.perform(MockMvcRequestBuilders.get("/public/api/book/{id}", 1)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("Title"));
@@ -64,7 +64,7 @@ public class BookControllerTest {
         Book book = new Book(1L, "Title", "Author", 19.99);
         when(bookService.createBook(any(Book.class))).thenReturn(book);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/book")
+        mockMvc.perform(MockMvcRequestBuilders.post("/public/api/book")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\":\"Title\",\"author\":\"Author\"}"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -76,7 +76,7 @@ public class BookControllerTest {
         Book book = new Book(1L, "Updated Title", "Updated Author", 19.99);
         when(bookService.updateBook(anyLong(), any(Book.class))).thenReturn(book);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/book/{id}", 1)
+        mockMvc.perform(MockMvcRequestBuilders.put("/public/api/book/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\":\"Updated Title\",\"author\":\"Updated Author\"}"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -85,7 +85,7 @@ public class BookControllerTest {
 
     @Test
     public void testDeleteBook() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/book/{id}", 1))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/public/api/book/{id}", 1))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 }
